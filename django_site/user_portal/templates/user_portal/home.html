@@ -8,6 +8,12 @@
     {% if current_user %}
     <h1>Welcome home {{current_user}}</h1>
     <p>This is your page</p>
+    {% else %}
+    <h1>
+      <a href="{% url 'create account' %}">Create an account</a>
+      or
+      <a href="{% url 'login' %}">Login</a>
+    </h1>
     {% endif %}
   </body>
 </html>
