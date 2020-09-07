@@ -1,5 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
+
+from .models import UserState
 
 
 def landing(request):
@@ -7,8 +9,11 @@ def landing(request):
 
 
 def home(request):
-    output = '<h1>Hello %s</h1>'
-    return HttpResponse(output)
+    try:
+        current_user = UserState.objects.get().current_user
+    except UserState.DoesNotExist:
+        raise Http404('User is not logged in, re-route to login page')
+    return render(request, 'user_portal/home.html', {'current_user': current_user})
 
 
 def create_account(request):

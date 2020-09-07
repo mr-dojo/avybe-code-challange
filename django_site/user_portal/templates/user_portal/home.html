@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Home</title>
+  </head>
+  <body>
+    {% if current_user %}
+    <h1>Welcome home {{current_user}}</h1>
+    <p>This is your page</p>
+    {% endif %}
+  </body>
+</html>
