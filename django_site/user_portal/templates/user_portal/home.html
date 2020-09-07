@@ -10,9 +10,9 @@
     <p>This is your page</p>
     {% else %}
     <h1>
-      <a href="{% url 'create account' %}">Create an account</a>
+      <a href="{% url 'user_portal:create account' %}">Create an account</a>
       or
-      <a href="{% url 'login' %}">Login</a>
+      <a href="{% url 'user_portal:login' %}">Login</a>
     </h1>
     {% endif %}
   </body>
