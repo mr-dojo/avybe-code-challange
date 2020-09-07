@@ -5,10 +5,6 @@ from .models import Person
 from .models import UserState
 
 
-def landing(request):
-    return HttpResponse('<h1>This is the landing page</h1><p>You can either log in or create account</p>')
-
-
 def home(request):
     try:
         current_user = UserState.objects.get().current_user
