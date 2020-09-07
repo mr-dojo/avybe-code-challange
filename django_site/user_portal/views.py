@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, HttpResponseRedirect
 
+from .models import Person
 from .models import UserState
 
 
@@ -17,7 +18,20 @@ def home(request):
 
 
 def create_account(request):
-    return HttpResponse('<h1>Enter nickname and image</h1>')
+    return render(request, 'user_portal/new-account.html')
+
+
+def save_account(request):
+    try:
+        user_nickname = request.POST['nickname']
+    except (KeyError, user_nickname.DoesNotExist):
+        return render(request, 'user_portal:create account.html', {'error_message': "You didn't tell me your nickname, don't be shy"})
+    else:
+        new_person = Person(nickname=user_nickname)
+        new_person.save()
+        login_as = UserState(current_user=user_nickname)
+        login_as.save()
+        return HttpResponseRedirect('home')
 
 
 def edit_account(request):
