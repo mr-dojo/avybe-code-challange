@@ -27,7 +27,7 @@ def save_account(request):
         new_person.save()
         login_as = UserState(current_user=user_nickname)
         login_as.save()
-        return HttpResponseRedirect('home')
+        return HttpResponseRedirect('/')
 
 
 def edit_account(request):
@@ -35,4 +35,24 @@ def edit_account(request):
 
 
 def login(request):
-    return HttpResponse('<h1>Login</h1>')
+    return render(request, 'user_portal/login.html')
+
+
+def validate_login(request):
+    try:
+        # Remove currently logged in user and check that login nickname exists
+        login_nickname = request.POST['users-nickname']
+        valid_nickname = Person.objects.get(nickname=login_nickname) or 0
+
+        current_user = UserState.objects.all()
+        current_user.delete()
+
+    except (KeyError, bool(valid_nickname)):
+        return render(request, 'user_portal:login.html', {'error_message': "Your nickname is incorrect"})
+    except (KeyError, login_nickname.DoesNotExist):
+        return render(request, 'user_portal:login.html', {'error_message': "Please enter your nickname"})
+
+    else:
+        login_as = UserState(current_user=valid_nickname)
+        login_as.save()
+        return HttpResponseRedirect('/')

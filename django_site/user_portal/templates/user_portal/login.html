@@ -11,7 +11,7 @@
     <p><strong>{{ error_message }}</strong></p>
     {% endif %}
 
-    <form action="{% url 'user_portal:placeholder' %}" method="post">
+    <form action="{% url 'user_portal:validate login' %}" method="post">
       {% csrf_token %}
       <label for="users-nickname">Nickname</label>
       <input
