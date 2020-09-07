@@ -12,7 +12,7 @@ def home(request):
     try:
         current_user = UserState.objects.get().current_user
     except UserState.DoesNotExist:
-        raise Http404('User is not logged in, re-route to login page')
+        current_user = {}
     return render(request, 'user_portal/home.html', {'current_user': current_user})
 
 
