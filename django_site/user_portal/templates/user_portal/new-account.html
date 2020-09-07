@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>New Account</title>
+  </head>
+  <body>
+    <h1>Create a new account</h1>
+    <form action="{% url 'user_portal:save account' %}" method="post">
+      {% csrf_token %}
+      <label for="nickname">Nickname</label>
+      <input
+        type="text"
+        name="nickname"
+        placeholder="what do they call you?"
+        id="nickname"
+      /><br />
+      <input type="submit" value="Save" />
+    </form>
+    <br />
+
+    <p>
+      <a href="{% url 'user_portal:login' %}">Login</a>
+    </p>
+  </body>
+</html>
