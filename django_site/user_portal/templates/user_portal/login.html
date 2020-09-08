@@ -11,16 +11,8 @@
     <p><strong>{{ error_message }}</strong></p>
     {% endif %}
 
-    <form action="{% url 'user_portal:validate login' %}" method="post">
-      {% csrf_token %}
-      <label for="users-nickname">Nickname</label>
-      <input
-        type="text"
-        name="users-nickname"
-        placeholder="enter account nickname"
-        id="users-nickname"
-        required
-      /><br />
+    <form action="{% url 'user_portal:login' %}" method="POST">
+      {% csrf_token %} {{ form.as_p }}
       <input type="submit" value="Login" />
     </form>
     <br />
