@@ -11,6 +11,7 @@ class PersonForm(forms.ModelForm):
         model = Person
         fields = [
             'nickname',
+            'profile_image',
         ]
 
 
@@ -24,4 +25,9 @@ class UserStateForm(forms.ModelForm):
         model = UserState
         fields = [
             'current_user',
+            'profile_image',
         ]
+
+
+class LoginForm(forms.Form):
+    current_user = forms.CharField()

@@ -8,11 +8,12 @@
     {% if current_user %}
     <h1>Welcome home {{current_user}}</h1>
 
+    <img src="{{profile_image.url}}" alt="users profile image" />
+
+    <br />
     {% if error_message %}
     <p><strong>{{ error_message }}</strong></p>
     {% endif %}
-
-    <p>This is your page</p>
 
     <p>
       <a href="{% url 'user_portal:logout' %}">Logout</a>

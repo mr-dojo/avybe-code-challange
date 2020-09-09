@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.forms import ValidationError
 
-from .forms import PersonForm, UserStateForm
+from .forms import PersonForm, UserStateForm, LoginForm
 
 from .models import Person, UserState
 
@@ -12,21 +12,31 @@ from .models import Person, UserState
 def home(request):
     try:
         current_user = UserState.objects.get().current_user
+        profile_image = UserState.objects.get().profile_image
+        context = {
+            'current_user': current_user,
+            'profile_image': profile_image,
+        }
     except UserState.DoesNotExist:
-        current_user = {}
-    return render(request, 'user_portal/home.html', {'current_user': current_user})
+        context = {}
+
+    return render(request, 'user_portal/home.html', context)
 
 
 def create_account(request):
-    form = PersonForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        new_nickname = form.cleaned_data.get('nickname')
-        login_as = UserState(current_user=new_nickname)
-        login_as.save()
-        return HttpResponseRedirect('/')
+    if request.method == 'POST':
+        form = PersonForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            nickname = form.cleaned_data.get('nickname')
+            image = form.cleaned_data.get('profile_image')
+            login_as = UserState(current_user=nickname, profile_image=image)
+            login_as.save()
+            return HttpResponseRedirect('/')
+        else:
+            print(form.errors)
     else:
-        print(form.errors)
+        form = PersonForm()
 
     context = {
         'form': form
@@ -36,21 +46,26 @@ def create_account(request):
 
 
 def edit_account(request):
-    form = UserStateForm(request.POST or None)
-    current_user_nickname = UserState.objects.get().current_user
-    if form.is_valid():
-        # Update current logged in user
-        current_user = UserState.objects.get()
-        current_user.delete()
-        form.save()
-        # Update person
-        new_nickname = form.cleaned_data.get('current_user')
-        person = Person.objects.get(nickname=current_user_nickname)
-        person.nickname = new_nickname
-        person.save()
-        return HttpResponseRedirect('/')
+    if request.method == 'POST':
+        form = UserStateForm(request.POST, request.FILES)
+        current_user_nickname = UserState.objects.get().current_user
+        if form.is_valid():
+            # Update current logged in user
+            current_user = UserState.objects.get()
+            current_user.delete()
+            form.save()
+            # Update person
+            new_nickname = form.cleaned_data.get('current_user')
+            new_image = form.cleaned_data.get('profile_image')
+            person = Person.objects.get(nickname=current_user_nickname)
+            person.nickname = new_nickname
+            person.profile_image = new_image
+            person.save()
+            return HttpResponseRedirect('/')
+        else:
+            print(form.errors)
     else:
-        print(form.errors)
+        form = UserStateForm()
 
     context = {
         'form': form
@@ -60,19 +75,27 @@ def edit_account(request):
 
 
 def login(request):
-    form = PersonForm(request.POST or None)
     if request.method == 'POST':
+        form = LoginForm(request.POST)
         if form.is_valid():
-            new_nickname = form.cleaned_data.get('nickname')
-            valid_nickname = Person.objects.get(nickname=new_nickname)
-            login_as = UserState(current_user=new_nickname)
+            user = form.cleaned_data.get('current_user')
+            users_image = Person.objects.get(nickname=user).profile_image
+            login_as = UserState(current_user=user, profile_image=users_image)
             login_as.save()
             return HttpResponseRedirect('/')
+        else:
+            print(form.errors)
+    else:
+        form = LoginForm()
 
     context = {
         'form': form,
     }
     return render(request, 'user_portal/login.html', context)
+
+
+def media(request):
+    return render(request, 'media.html')
 
 
 # ________ACTIONS_________
